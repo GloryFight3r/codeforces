@@ -1,5 +1,5 @@
 /*
- *　がんばって
+ * がんばって
 */
 
 #include <bits/stdc++.h>
@@ -60,7 +60,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 5e5+5;
+const int mxN = 2e5+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -181,88 +181,89 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
-int n, a[mxN];
+int n;
+int to_ask = 0;
 
-struct nmb {
-	int l, r, ind;
+int ask(int a, int b) {
+	to_ask--;
+	assert(to_ask >= 0);
 
-	nmb(int _l, int _r, int _ind) {
-		l = _l;
-		r = _r;
-		ind = _ind;
-	}
+	ps("?", a, b);
+	cout.flush();
+	int x;
+	re(x);
 
-	bool operator<(nmb other) const {
-		return l < other.l || (l == other.l && r < other.r);
-	}
-};
+	assert(x != -1);
 
-int bin_search(int type, int number, int index) {
-	int l = 1, r = n;
-	int ans = 0;
-
-	while(l <= r) {
-		int middle = (l + r) >> 1;
-
-		//DBG(middle, index/middle, l, r);
-
-		if((index / middle) == number) {
-			ans = middle;
-			if(!type) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
-		}	
-		else {
-			if((index / middle) < number) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
-		}
-	}
-	return ans;
+	return x;
 }
 
+int v[2][mxN];
+
+// 0 raven, 1 - a poveche ot b, 2 - b poveche ot a
 void solve() {
-	//DBG(bin_search(0, a[1], 2));
-	vector<vpi> vt(n + 1);
-	vi r_max(n);
-	for(int i = 0; i < n; i++) {
-		int l = bin_search(0, a[i], i + 1);
-		int r = bin_search(1, a[i], i + 1);
-		r_max[i] = r;
-		vt[l].pb({r, i});
-//		DBG(i + 1, l, r);
+	to_ask = cdiv(1 << (n + 1), 3);
+	//DBG(to_ask);
+	
+	int k[2] = {0, 0};
+	for(int i = 0; i < (1 << n); i++) {
+		v[0][k[0]++] = (i + 1);
 	}
-	//FOR(i, 1, n + 1){
-//		sort(vt[i].begin(), vt[i].end());
-//	}
-
-	vi ans(n);
-	set <pi> st;
-	st.ins({n + 2, n + 1});
-
-	for(int i = 1; i <= n; i++) {
-		trav(x, vt[i]) {
-			st.ins(x);
+	
+	int t = 0;
+	while(true) {
+		if(k[t] == 1) {
+			ps("!", v[t][0]);
+			cout.flush();
+			return;
 		}
+		else if(k[t] == 2) {
+			int x = ask(v[t][0], v[t][1]);
+			if(x == 1) {
+				ps("!", v[t][0]);
+			}
+			else {
+				ps("!", v[t][1]);
+			}
+			cout.flush();
+			return;
+		}
+		else {
+			k[t ^ 1] = 0;
+			for(int i = 0; i < k[t]; i += 4) {
+				int x = ask(v[t][i], v[t][i + 2]);
+				if(x == 0) {
+					x = ask(v[t][i + 1], v[t][i + 3]);
+					if(x == 1) {
+						v[t ^ 1][k[t ^ 1]++] = v[t][i + 1];
+					}
+					else {
+						v[t ^ 1][k[t ^ 1]++] = v[t][i + 3];
+					}
+				}
+				else if(x == 1) {
+					int x2 = ask(v[t][i], v[t][i + 3]);
+					if(x2 == 1) {
+						v[t ^ 1][k[t ^ 1]++] = v[t][i];
+					}
+					else {
+						v[t ^ 1][k[t ^ 1]++] = v[t][i + 3];
+					}
+				}
+				else {
+					int x2 = ask(v[t][i + 2], v[t][i + 1]);
 
-		// select the one to take i
-		auto x = *(st.begin());
-		ans[x.s] = i;
-
-		st.erase(x);
+					if(x2 == 1) {
+						v[t ^ 1][k[t ^ 1]++] = v[t][i + 2];
+					}
+					else {
+						v[t ^ 1][k[t ^ 1]++] = v[t][i + 1];
+					}
+				}
+			}
+			t ^= 1;
+		}
 	}
-
-	trav(x, ans) {
-		pr(x, " ");
-	}
-
-	ps();
 }
 
 int main() {
@@ -272,21 +273,8 @@ int main() {
 
 	while(t--) {
 		re(n);
-		FOR(i, 0, n) {
-			re(a[i]);
-		}
 		solve();
 	}
 
 	return 0;
-	//read stuff at the bottom ffs
 }
-/* things to keep in mind 
- * int overflow, array bounds
- * any special cases
- * always do something
- * WRITE STUFF DOWN
- * THINK ABOUT OTHER APPROACHES
- * DON'T NON STOP CHECK OTHERS
- * DON'T PANIC
-*/ 

@@ -1,5 +1,5 @@
 /*
- *　がんばって
+ * がんばって
 */
 
 #include <bits/stdc++.h>
@@ -60,7 +60,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 5e5+5;
+const int mxN = 2e5+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -181,102 +181,95 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
-int n, a[mxN];
+int n, a[mxN], gg;
+int b[mxN];
 
-struct nmb {
-	int l, r, ind;
-
-	nmb(int _l, int _r, int _ind) {
-		l = _l;
-		r = _r;
-		ind = _ind;
-	}
-
-	bool operator<(nmb other) const {
-		return l < other.l || (l == other.l && r < other.r);
-	}
-};
-
-int bin_search(int type, int number, int index) {
-	int l = 1, r = n;
-	int ans = 0;
-
-	while(l <= r) {
-		int middle = (l + r) >> 1;
-
-		//DBG(middle, index/middle, l, r);
-
-		if((index / middle) == number) {
-			ans = middle;
-			if(!type) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
-		}	
-		else {
-			if((index / middle) < number) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
+/*int ask() {
+	gg++;
+	DBG(gg);
+	//assert(gg <= 675);
+	int z = 0;
+	FOR(i, 0, n) {
+		if(a[i] == b[i]) {
+			z++;
 		}
+		//pr(a[i], " ");
 	}
-	return ans;
+	//ps();
+	//DBG(z);
+	return z;
+}*/
+
+int ask() {
+	gg++;
+	assert(gg <= 675);
+	FOR(i, 0, n) {
+		pr(a[i]?"T":"F");
+	}
+	ps();
+	cout.flush();
+	int x; re(x);
+	assert(x != -1);
+	//if(x == -1) exit(0);
+	return x;
 }
 
 void solve() {
-	//DBG(bin_search(0, a[1], 2));
-	vector<vpi> vt(n + 1);
-	vi r_max(n);
-	for(int i = 0; i < n; i++) {
-		int l = bin_search(0, a[i], i + 1);
-		int r = bin_search(1, a[i], i + 1);
-		r_max[i] = r;
-		vt[l].pb({r, i});
-//		DBG(i + 1, l, r);
+	FOR(i, 0, n) {
+		//a[i] = rng() % 2;
+		a[i] = 0;
 	}
-	//FOR(i, 1, n + 1){
-//		sort(vt[i].begin(), vt[i].end());
-//	}
+	int original = ask();
+	if(original == n) return;
+	int l = 0, r = n - 1;
 
-	vi ans(n);
-	set <pi> st;
-	st.ins({n + 2, n + 1});
+	while(l <= r) {
+		int z;
+		if(l == r) {
+			int p = ask();
+			if(p == n) return;
 
-	for(int i = 1; i <= n; i++) {
-		trav(x, vt[i]) {
-			st.ins(x);
+			a[l] ^= 1;
+			p = ask();
+			assert(p == n);
+			return;
 		}
-
-		// select the one to take i
-		auto x = *(st.begin());
-		ans[x.s] = i;
-
-		st.erase(x);
+		else {
+			a[l] ^= 1;
+			a[r] ^= 1;
+			z = ask();
+			int h = z;
+			if(z == n) return;
+			if(z - original == -2) {
+				a[l] ^= 1;
+				a[r] ^= 1;
+				original-=2;
+			}
+			else if(z - original == 0) {
+				a[l] ^= 1;
+				z = ask();
+				if(z == n) {
+					return;
+				}
+				if(z < h) {
+					a[l] ^= 1;
+					a[r] ^= 1;
+				}
+				original--;
+			}
+			l++; r--;
+			original += 2;
+		}
 	}
-
-	trav(x, ans) {
-		pr(x, " ");
-	}
-
-	ps();
+	//DBG("DAS");
+	int t = ask();
 }
 
 int main() {
 	setIO();
 
-	int t; re(t);
-
-	while(t--) {
-		re(n);
-		FOR(i, 0, n) {
-			re(a[i]);
-		}
-		solve();
-	}
+	re(n);
+	solve();
 
 	return 0;
 	//read stuff at the bottom ffs

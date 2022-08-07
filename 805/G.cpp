@@ -1,5 +1,5 @@
 /*
- *　がんばって
+ * がんばって
 */
 
 #include <bits/stdc++.h>
@@ -60,7 +60,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 5e5+5;
+const int mxN = 2e5+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -181,102 +181,99 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
-int n, a[mxN];
+int n;
+vi graph[mxN];
+int par[mxN][21], dist[mxN];
 
-struct nmb {
-	int l, r, ind;
-
-	nmb(int _l, int _r, int _ind) {
-		l = _l;
-		r = _r;
-		ind = _ind;
+void dfs(int v, int p, int d) {
+	par[v][0] = p;
+	dist[v] = d;
+	FOR(i, 1, 21) {
+		par[v][i] = par[par[v][i - 1]][i - 1];
 	}
-
-	bool operator<(nmb other) const {
-		return l < other.l || (l == other.l && r < other.r);
+	trav(x, graph[v]) {
+		if(x == p) continue;
+		dfs(x, v, d + 1);
 	}
-};
-
-int bin_search(int type, int number, int index) {
-	int l = 1, r = n;
-	int ans = 0;
-
-	while(l <= r) {
-		int middle = (l + r) >> 1;
-
-		//DBG(middle, index/middle, l, r);
-
-		if((index / middle) == number) {
-			ans = middle;
-			if(!type) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
-		}	
-		else {
-			if((index / middle) < number) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
-		}
-	}
-	return ans;
 }
 
-void solve() {
-	//DBG(bin_search(0, a[1], 2));
-	vector<vpi> vt(n + 1);
-	vi r_max(n);
-	for(int i = 0; i < n; i++) {
-		int l = bin_search(0, a[i], i + 1);
-		int r = bin_search(1, a[i], i + 1);
-		r_max[i] = r;
-		vt[l].pb({r, i});
-//		DBG(i + 1, l, r);
-	}
-	//FOR(i, 1, n + 1){
-//		sort(vt[i].begin(), vt[i].end());
-//	}
+void precompute() {
+	dfs(1, 1, 1);
+}
 
-	vi ans(n);
-	set <pi> st;
-	st.ins({n + 2, n + 1});
-
-	for(int i = 1; i <= n; i++) {
-		trav(x, vt[i]) {
-			st.ins(x);
+int lca(int v, int w) {
+	if(dist[v] > dist[w]) swap(v, w);
+	// v must be smaller
+	for(int i = 20; i >= 0; i--) {
+		if(dist[par[w][i]] >= dist[v]) {
+			w = par[w][i];
 		}
-
-		// select the one to take i
-		auto x = *(st.begin());
-		ans[x.s] = i;
-
-		st.erase(x);
 	}
-
-	trav(x, ans) {
-		pr(x, " ");
+	if(v == w) return v;
+	for(int i = 20; i >= 0; i--) {
+		if(par[v][i] != par[w][i]) {
+			v = par[v][i];
+			w = par[w][i];
+		}
 	}
+	return par[v][0];
+}
 
-	ps();
+int b[mxN];
+pi vt[mxN];
+
+void solve() {
+	int q; re(q);
+
+	int k, v;
+
+	while(q--) {
+		re(k);
+		int lc = -1;
+		FOR(i, 0, k) {
+			re(b[i]);
+			if(lc == -1) lc = b[i];
+			else {
+				lc = lca(lc, b[i]);
+			}
+			vt[i] = {dist[b[i]], b[i]};
+		}
+		sort(vt, vt + k);
+		int lft = vt[k - 1].second;
+		int right = vt[0].second;
+		for(int j = k - 2; j >= 0; j--) {
+			if(lca(lft, vt[j].second) != vt[j].second) {
+				right = vt[j].second;
+				break;
+			}
+		}
+		//DBG(lft, right);
+		bool flag = true;
+		//DBG(lft, right, lc);
+		if(lca(lft, right) != lc) flag = false;
+		FOR(i, 0, k) {
+			//DBG(lca(b[i], lft), lca(b[i], right), lft, right, b[i]);
+			if(lca(b[i], lft) != b[i] && lca(b[i], right) != b[i]) {
+				flag = false;
+			}
+		}
+		ps(flag?"YES":"NO");
+		//DBG(lc);
+	}
 }
 
 int main() {
 	setIO();
 
-	int t; re(t);
-
-	while(t--) {
-		re(n);
-		FOR(i, 0, n) {
-			re(a[i]);
-		}
-		solve();
+	re(n);
+	int v, w;
+	FOR(i, 0, n - 1) {
+		re(v, w);
+		graph[v].pb(w);
+		graph[w].pb(v);
 	}
+	precompute();
+	solve();
 
 	return 0;
 	//read stuff at the bottom ffs

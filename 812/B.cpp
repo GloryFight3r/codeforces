@@ -1,5 +1,5 @@
 /*
- *　がんばって
+ * がんばって
 */
 
 #include <bits/stdc++.h>
@@ -60,7 +60,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 5e5+5;
+const int mxN = 2e5+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -183,86 +183,28 @@ tcTUU> void DBG(const T& t, const U&... u) {
 
 int n, a[mxN];
 
-struct nmb {
-	int l, r, ind;
-
-	nmb(int _l, int _r, int _ind) {
-		l = _l;
-		r = _r;
-		ind = _ind;
+bool solve() {
+	vi st;
+	FOR(i, 0, n) {
+		st.pb(a[i]);
 	}
+	sort(st.begin(), st.end());
+	
+	int l = 0, r = n - 1;
 
-	bool operator<(nmb other) const {
-		return l < other.l || (l == other.l && r < other.r);
-	}
-};
-
-int bin_search(int type, int number, int index) {
-	int l = 1, r = n;
-	int ans = 0;
-
-	while(l <= r) {
-		int middle = (l + r) >> 1;
-
-		//DBG(middle, index/middle, l, r);
-
-		if((index / middle) == number) {
-			ans = middle;
-			if(!type) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
-		}	
+	FOR(i, 0, n) {
+		if(st[i] == a[l]) {
+			l++;
+		}
+		else if(st[i] == a[r]) {
+			r--;
+		}
 		else {
-			if((index / middle) < number) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
+			return false;
 		}
 	}
-	return ans;
-}
 
-void solve() {
-	//DBG(bin_search(0, a[1], 2));
-	vector<vpi> vt(n + 1);
-	vi r_max(n);
-	for(int i = 0; i < n; i++) {
-		int l = bin_search(0, a[i], i + 1);
-		int r = bin_search(1, a[i], i + 1);
-		r_max[i] = r;
-		vt[l].pb({r, i});
-//		DBG(i + 1, l, r);
-	}
-	//FOR(i, 1, n + 1){
-//		sort(vt[i].begin(), vt[i].end());
-//	}
-
-	vi ans(n);
-	set <pi> st;
-	st.ins({n + 2, n + 1});
-
-	for(int i = 1; i <= n; i++) {
-		trav(x, vt[i]) {
-			st.ins(x);
-		}
-
-		// select the one to take i
-		auto x = *(st.begin());
-		ans[x.s] = i;
-
-		st.erase(x);
-	}
-
-	trav(x, ans) {
-		pr(x, " ");
-	}
-
-	ps();
+	return true;
 }
 
 int main() {
@@ -275,18 +217,9 @@ int main() {
 		FOR(i, 0, n) {
 			re(a[i]);
 		}
-		solve();
+		ps(solve()?"YES":"NO");
 	}
 
 	return 0;
-	//read stuff at the bottom ffs
+				//read stuff at the bottom ffs
 }
-/* things to keep in mind 
- * int overflow, array bounds
- * any special cases
- * always do something
- * WRITE STUFF DOWN
- * THINK ABOUT OTHER APPROACHES
- * DON'T NON STOP CHECK OTHERS
- * DON'T PANIC
-*/ 

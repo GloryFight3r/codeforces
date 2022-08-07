@@ -1,5 +1,5 @@
 /*
- *　がんばって
+ * Stay strong brother
 */
 
 #include <bits/stdc++.h>
@@ -60,7 +60,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 5e5+5;
+const int mxN = 2e5+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -181,88 +181,59 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
-int n, a[mxN];
+int n;
+str a[2];
+// direction/index /row
+int T[2][mxN][2];
 
-struct nmb {
-	int l, r, ind;
-
-	nmb(int _l, int _r, int _ind) {
-		l = _l;
-		r = _r;
-		ind = _ind;
+void precomp(int direction) {
+	int start = 1, end = n + 1;
+	int pos = 1;
+	
+	if(direction == 1) {
+		start = n;
+		end = 0;
+		pos = -1;
 	}
+	for(int i = 0; i < 2; i++)
+		T[i][0][0] = T[i][0][1] = T[i][n + 1][0] = T[i][n + 1][1] = 0;
 
-	bool operator<(nmb other) const {
-		return l < other.l || (l == other.l && r < other.r);
-	}
-};
+	for(int i = start; i != end; i += pos) {
+		for(int j = 0; j < 2; j++) {
+			int prev_up = T[direction][i - pos][j];
+			int prev_down = T[direction][i - pos][j ^ 1];
+			if(prev_up || a[j][i - pos] == '*') prev_up++;
+			
+			// calculate from same row
+			T[direction][i][j] = prev_up + (a[j ^ 1][i] == '*');
 
-int bin_search(int type, int number, int index) {
-	int l = 1, r = n;
-	int ans = 0;
-
-	while(l <= r) {
-		int middle = (l + r) >> 1;
-
-		//DBG(middle, index/middle, l, r);
-
-		if((index / middle) == number) {
-			ans = middle;
-			if(!type) {
-				r = middle - 1;
+			// calculate from other row
+			if(prev_down || a[j ^ 1][i - pos] == '*') {
+				T[direction][i][j] = min(T[direction][i][j], prev_down + 2);
 			}
 			else {
-				l = middle + 1;
+				T[direction][i][j] = min(T[direction][i][j], (a[j ^ 1][i]=='*'?1:0));
 			}
-		}	
-		else {
-			if((index / middle) < number) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
+		}
+		//DBG(i);
+	}
+	//DBG("DAS");
+}
+
+int solve() {
+	precomp(0);
+	precomp(1); // from right to left
+	
+	int ans = 4*n;
+	for(int i = 0; i <= n; i++) {
+		for(int j = 0; j < 2; j++) {
+			int temp_ans = T[0][i][j] + T[1][i + 1][j];
+			if((T[0][i][j] != 0 || a[j][i] == '*') && (T[1][i + 1][j] != 0 || a[j][i + 1])) temp_ans++;
+			//DBG(j, i, T[0][i][j], T[1][i + 1][j], temp_ans);
+			ans = min(ans, temp_ans);
 		}
 	}
 	return ans;
-}
-
-void solve() {
-	//DBG(bin_search(0, a[1], 2));
-	vector<vpi> vt(n + 1);
-	vi r_max(n);
-	for(int i = 0; i < n; i++) {
-		int l = bin_search(0, a[i], i + 1);
-		int r = bin_search(1, a[i], i + 1);
-		r_max[i] = r;
-		vt[l].pb({r, i});
-//		DBG(i + 1, l, r);
-	}
-	//FOR(i, 1, n + 1){
-//		sort(vt[i].begin(), vt[i].end());
-//	}
-
-	vi ans(n);
-	set <pi> st;
-	st.ins({n + 2, n + 1});
-
-	for(int i = 1; i <= n; i++) {
-		trav(x, vt[i]) {
-			st.ins(x);
-		}
-
-		// select the one to take i
-		auto x = *(st.begin());
-		ans[x.s] = i;
-
-		st.erase(x);
-	}
-
-	trav(x, ans) {
-		pr(x, " ");
-	}
-
-	ps();
 }
 
 int main() {
@@ -272,10 +243,11 @@ int main() {
 
 	while(t--) {
 		re(n);
-		FOR(i, 0, n) {
+		FOR(i, 0, 2) {
 			re(a[i]);
+			a[i] = "#" + a[i] + "#";
 		}
-		solve();
+		ps(solve());
 	}
 
 	return 0;

@@ -1,5 +1,5 @@
 /*
- *　がんばって
+ * がんばって
 */
 
 #include <bits/stdc++.h>
@@ -60,7 +60,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 5e5+5;
+const int mxN = 3e5+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -181,107 +181,168 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
-int n, a[mxN];
-
-struct nmb {
-	int l, r, ind;
-
-	nmb(int _l, int _r, int _ind) {
-		l = _l;
-		r = _r;
-		ind = _ind;
+struct segm_tree {
+	int tree[tSZ];
+	int lazy[tSZ];
+	int mx[tSZ];
+	
+	segm_tree() {
+		FOR(i, 0, tSZ) {
+			tree[i] = lazy[i] = mx[i] = 0;
+		}
 	}
 
-	bool operator<(nmb other) const {
-		return l < other.l || (l == other.l && r < other.r);
-	}
-};
+	void push(int node, int l, int r) {
+		if(l > r) return;
 
-int bin_search(int type, int number, int index) {
-	int l = 1, r = n;
-	int ans = 0;
+		if(lazy[node] != 0) {
+
+			tree[node] += lazy[node] * (r - l + 1);
+			if(tree[node] == 0) {
+				mx[node] = 0;
+			}
+			else {
+				mx[node] = r;
+			}
+			if(l != r) {
+				lazy[node << 1] += lazy[node];
+				lazy[node << 1 | 1] += lazy[node];
+			}
+
+			lazy[node] = 0;
+		}
+	}
+
+	void update(int node, int l, int r, int i, int j, int value) {
+		push(node, l, r);
+		if(r < i || l > j || l > r) return;
+
+		if(r <= j && l >= i) {
+			lazy[node] += value;
+			push(node, l, r);
+			return;
+		}
+		int middle = (l + r) >> 1;
+
+		update(node << 1, l, middle, i, j, value);
+		update(node << 1 | 1, middle + 1, r, i, j, value);
+		tree[node] = tree[node << 1] + tree[node << 1 | 1];
+		mx[node] = max(mx[node << 1], mx[node << 1 | 1]);
+	}
+
+	int query(int node, int l, int r, int i, int j) {
+		if(r < i || l > j || l > r) return 0;
+		push(node, l, r);
+
+		if(r <= j && l >= i) {
+			return tree[node];
+		}
+		int middle = (l + r) >> 1;
+
+		return query(node << 1, l, middle, i, j) + query(node << 1 | 1, middle + 1, r, i, j);
+	}
+
+	int query(int l, int r) {
+		return query(1, 1, mxN, l, r);
+	}
+	
+	void update(int l, int r, int val) {
+		update(1, 1, mxN, l, r, val);
+	}
+} sgm_tree;
+
+int n, q, a[mxN];
+
+void add(int v) {
+	// find first zero from v
+	
+	int sm = sgm_tree.query(0, v - 1);
+
+	int l = v, r = mxN;
+	int ans = v;
 
 	while(l <= r) {
 		int middle = (l + r) >> 1;
+		
+		int x = sgm_tree.query(1, middle);
 
-		//DBG(middle, index/middle, l, r);
-
-		if((index / middle) == number) {
+		if(sm + (middle - v) + 1 > x) {
 			ans = middle;
-			if(!type) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
-		}	
+			r = middle - 1;
+		}
 		else {
-			if((index / middle) < number) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
+			l = middle + 1;
 		}
 	}
-	return ans;
+
+	if(ans == v) {
+		sgm_tree.update(v, v, 1);
+	}
+	else {
+		sgm_tree.update(v, ans - 1, -1);
+		sgm_tree.update(ans, ans, 1);
+	}
+}
+
+void sub(int v) {
+	// find first one from v
+	
+	int sm = sgm_tree.query(1, v - 1);
+
+	int l = v, r = mxN;
+	int ans = v - 1;
+
+	while(l <= r) {
+		int middle = (l + r) >> 1;
+		
+		int x = sgm_tree.query(1, middle);
+
+		if(sm == x) {
+			ans = middle;
+			l = middle + 1;
+		}
+		else {
+			r = middle - 1;
+		}
+	}
+	ans++;
+	if(ans == v) {
+		sgm_tree.update(v, v, -1);
+	}
+	else {
+		sgm_tree.update(v, ans - 1, 1);
+		sgm_tree.update(ans, ans, -1);
+	}
 }
 
 void solve() {
-	//DBG(bin_search(0, a[1], 2));
-	vector<vpi> vt(n + 1);
-	vi r_max(n);
-	for(int i = 0; i < n; i++) {
-		int l = bin_search(0, a[i], i + 1);
-		int r = bin_search(1, a[i], i + 1);
-		r_max[i] = r;
-		vt[l].pb({r, i});
-//		DBG(i + 1, l, r);
+	int k, v;
+	FOR(i, 0, q) {
+		re(k, v);
+		k--;
+		sub(a[k]);
+		a[k] = v;
+		add(a[k]);
+		ps(sgm_tree.mx[1]);
 	}
-	//FOR(i, 1, n + 1){
-//		sort(vt[i].begin(), vt[i].end());
-//	}
-
-	vi ans(n);
-	set <pi> st;
-	st.ins({n + 2, n + 1});
-
-	for(int i = 1; i <= n; i++) {
-		trav(x, vt[i]) {
-			st.ins(x);
-		}
-
-		// select the one to take i
-		auto x = *(st.begin());
-		ans[x.s] = i;
-
-		st.erase(x);
-	}
-
-	trav(x, ans) {
-		pr(x, " ");
-	}
-
-	ps();
 }
 
 int main() {
 	setIO();
 
-	int t; re(t);
+	re(n, q);
 
-	while(t--) {
-		re(n);
-		FOR(i, 0, n) {
-			re(a[i]);
-		}
-		solve();
+	FOR(i, 0, n) {
+		re(a[i]);
+		add(a[i]);
 	}
+
+	solve();
 
 	return 0;
 	//read stuff at the bottom ffs
 }
-/* things to keep in mind 
+/* things to keep in mind
  * int overflow, array bounds
  * any special cases
  * always do something
@@ -289,4 +350,4 @@ int main() {
  * THINK ABOUT OTHER APPROACHES
  * DON'T NON STOP CHECK OTHERS
  * DON'T PANIC
-*/ 
+*/

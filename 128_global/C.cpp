@@ -1,5 +1,5 @@
 /*
- *　がんばって
+ * Stay strong brother
 */
 
 #include <bits/stdc++.h>
@@ -60,7 +60,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 5e5+5;
+const int mxN = 2e5+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -181,101 +181,70 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
-int n, a[mxN];
+int n;
+str a;
+int s1[mxN];
+int s0[mxN];
 
-struct nmb {
-	int l, r, ind;
-
-	nmb(int _l, int _r, int _ind) {
-		l = _l;
-		r = _r;
-		ind = _ind;
-	}
-
-	bool operator<(nmb other) const {
-		return l < other.l || (l == other.l && r < other.r);
-	}
-};
-
-int bin_search(int type, int number, int index) {
-	int l = 1, r = n;
-	int ans = 0;
-
-	while(l <= r) {
-		int middle = (l + r) >> 1;
-
-		//DBG(middle, index/middle, l, r);
-
-		if((index / middle) == number) {
-			ans = middle;
-			if(!type) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
-		}	
-		else {
-			if((index / middle) < number) {
-				r = middle - 1;
-			}
-			else {
-				l = middle + 1;
-			}
-		}
-	}
-	return ans;
+pi get_sum(int index, int ones, int zeroes) {
+	return {zeroes - s0[index], ones + s1[index]};
 }
 
-void solve() {
-	//DBG(bin_search(0, a[1], 2));
-	vector<vpi> vt(n + 1);
-	vi r_max(n);
-	for(int i = 0; i < n; i++) {
-		int l = bin_search(0, a[i], i + 1);
-		int r = bin_search(1, a[i], i + 1);
-		r_max[i] = r;
-		vt[l].pb({r, i});
-//		DBG(i + 1, l, r);
+int solve() {
+	n = sz(a);
+	a = '#' + a;
+	int sm = 0;
+	for(int i = 1; i <= n; i++) {
+		s1[i] = s1[i - 1] + (a[i] == '1');
+		s0[i] = s0[i - 1] + (a[i] == '0');
 	}
-	//FOR(i, 1, n + 1){
-//		sort(vt[i].begin(), vt[i].end());
-//	}
-
-	vi ans(n);
-	set <pi> st;
-	st.ins({n + 2, n + 1});
+	int ans = s1[n];
+	int c_ones = ans;
+	int c_zeroes = 0;
 
 	for(int i = 1; i <= n; i++) {
-		trav(x, vt[i]) {
-			st.ins(x);
+		if(a[i] == '0') {
+			c_zeroes++;
+		}
+		else {
+			c_ones--;
 		}
 
-		// select the one to take i
-		auto x = *(st.begin());
-		ans[x.s] = i;
+		int l = 0, r = i;
+		int answer = i;
+		while(l <= r) {
+			int middle = (l + r) >> 1;
 
-		st.erase(x);
+			pi t_ans = get_sum(middle, c_ones, c_zeroes);
+			if(t_ans.second >= t_ans.first) {
+				answer = middle;
+				r = middle - 1;
+			}
+			else {
+				l = middle + 1;
+			}
+		}
+		////ps(i, c_ones, c_zeroes);
+		if(i == 8) {
+			//for(int j = 1; j <= i; j++)
+			//DBG(get_sum(j, c_ones, c_zeroes));
+		}
+		pi fin = get_sum(answer, c_ones, c_zeroes);
+		//ps(ans, fin);
+		ans = min(ans, max(fin.first, fin.second));
 	}
 
-	trav(x, ans) {
-		pr(x, " ");
-	}
-
-	ps();
+	return ans;
 }
 
 int main() {
 	setIO();
 
 	int t; re(t);
-
+	
 	while(t--) {
-		re(n);
-		FOR(i, 0, n) {
-			re(a[i]);
-		}
-		solve();
+		re(a);
+		ps(solve());
 	}
 
 	return 0;
