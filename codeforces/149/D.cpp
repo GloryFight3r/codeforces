@@ -10,6 +10,8 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <algorithm>
+#include <stack>
 
 using namespace std;
 
@@ -188,8 +190,77 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n;
+str a;
+
+void solve() {
+  vi ind(n);
+  FOR(i, 0, n) {
+    ind[i] = i;
+  }
+  vi answer(n);
+  int col = 0;
+  vi sizes;
+  if(a[0] == ')') {
+    sort(ind.begin(), ind.end(), greater<int>());
+  }
+  while (sz(ind) != 0) {
+    stack <int> st;
+    sizes.push_back(sz(ind));
+
+    if(sz(sizes) > 3 && sizes[sz(sizes) - 3] == sz(ind)) {
+      ps(-1);
+      return;
+    }
+    vi next_ind;
+    col++;
+    bool fl = false;
+    trav(x, ind) {
+      if (a[x] == '(') {
+        st.push(x);
+      }
+      else {
+        if(!st.empty()) {
+          int new_ind = st.top(); st.pop();
+          answer[new_ind] = col;
+          fl = true;
+          answer[x] = col;
+        }
+        else {
+          next_ind.pb(x);
+        }
+      }
+    }
+    while(!st.empty()) {
+      next_ind.pb(st.top()); st.pop();
+    }
+    if(col % 2 == 1) {
+      sort(next_ind.begin(), next_ind.end(), greater<int>());
+    }
+    else {
+      sort(next_ind.begin(), next_ind.end());
+    }
+
+    if(!fl) col--;
+    ind = next_ind;
+  }
+  ps(col);
+  FOR(i, 0, n) {
+    pr(answer[i], " ");
+  }
+  ps();
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    re(a);
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

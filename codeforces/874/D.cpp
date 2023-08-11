@@ -2,14 +2,7 @@
  * Fishing for salmon
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -67,7 +60,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 2e5+5;
+const int mxN = 2e3+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -188,8 +181,90 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN];
+
+struct answer {
+  int ans[mxN];
+  int k;
+
+  answer() {
+    FOR(i, 0, n) {
+      ans[i] = 0;
+    }
+    k = 0;
+  }
+
+  void add(int z) {
+    ans[k++] = z;
+  }
+
+  bool operator<(answer other) const {
+    FOR(i, 0, n) {
+      if(ans[i] > other.ans[i]) {
+        return false;
+      }
+      if(ans[i] < other.ans[i]) return true;
+    }
+  }
+};
+
+answer apply(int l, int r) {
+  if(l > r || r >= n) return answer();
+  answer ans = answer();
+
+  FOR(i, r + 1, n) {
+    ans.add(a[i]);
+  }
+  for (int i = r; i >= l; i--) {
+    ans.add(a[i]);
+  }
+  FOR(i, 0, l) {
+    ans.add(a[i]);
+  }
+  return ans;
+}
+
+void solve() {
+  // choose r to be j where a[j] == n
+  //
+  // choose r to be j - 1 where a[j] == n
+
+  answer ans = answer();
+  int j = 0;
+  int look_for = n;
+  if (a[0] == n) look_for = n - 1;
+  FOR(i, 0, n) {
+    if(a[i] == look_for) {
+      j = i;
+    }
+  }
+  ans = apply(0, j);
+  //DBG(answer);
+  FOR(i, 0, j + 1) {
+    //DBG(i, j - 1);
+    ans = max(ans, apply(i, j - 1)); 
+  }
+  FOR(i, 0, j + 1) {
+    ans = max(ans, apply(i, j));
+  }
+  FOR(i, 0, n) {
+    pr(ans.ans[i], " ");
+  }
+  ps();
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    FOR(i, 0, n) {
+      re(a[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

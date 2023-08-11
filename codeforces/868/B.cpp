@@ -188,8 +188,41 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, k, a[mxN];
+
+void solve() {
+  vi marked;
+  for(int i = 0; i < k; i++) {
+    for(int j = i; j < n; j += k) {
+      if ((a[j] - 1) % k != i) {
+        //DBG(a[j], j);
+        marked.pb(a[j]);
+      }
+    }
+  }
+  if(sz(marked) == 0) {
+    ps(0);
+  }
+  else if(sz(marked) == 2) {
+    ps(1);
+  }
+  else {
+    ps(-1);
+  }
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n, k);
+    FOR(i, 0, n) {
+      re(a[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

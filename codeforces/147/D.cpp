@@ -10,6 +10,7 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <algorithm>
 
 using namespace std;
 
@@ -188,8 +189,133 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+ll n, k;
+ll l[mxN], r[mxN];
+
+struct interval {
+  ll l, r;
+
+  interval(ll _l, ll _r) {
+    l = _l;
+    r = _r;
+  }
+  interval(){}
+
+  bool operator<(interval other) const {
+    return l < other.l || (l == other.l && r < other.r);
+  }
+};
+
+void solve() {
+  vector <interval> vv(n);
+  for(int i = 0; i < n; i++) {
+    vv[i] = interval(l[i], r[i]);
+  }
+  sort(vv.begin(), vv.end());
+
+  ll taken = 0;
+  ll prev = 0;
+  ll ans = 0;
+
+  vector <int> for_later_use;
+  vector <int> taken_intervals;
+
+  int prev_taken = 0;
+
+  for(int i = 0; i < n; i++) {
+    if(taken >= k) {
+      break;
+    }
+    if(vv[i].r != vv[i].l) {
+      taken_intervals.pb(i);
+      ans += vv[i].l - prev - 1;
+      ans += min(k - taken, vv[i].r - vv[i].l + 1) + 2;
+      prev_taken = k - taken;
+      prev = vv[i].r;
+      taken += min(k - taken, vv[i].r - vv[i].l + 1);
+    }
+    else {
+      for_later_use.pb(i);
+    }
+  }
+
+  int t = 0;
+  ll orig_prev = prev;
+  while(taken < k && t < sz(for_later_use)) {
+    if (vv[for_later_use[t]].l > prev) {
+      ans += vv[for_later_use[t]].l - prev;
+      prev = vv[for_later_use[t]].l;
+    }
+    ans += 2;
+    taken++;
+    t++;
+  }
+
+  if(taken < k) {
+    ps(-1);
+    return;
+  }
+  if(orig_prev != prev) {
+    ps(ans);
+    return;
+  }
+
+  int z = sz(taken_intervals) - 1;
+  if (z < 0) {
+    ps(ans);
+    return;
+  }
+
+  ll need_to_take = prev_taken; //vv[taken_intervals[z]].r - vv[taken_intervals[z]].l + 1;
+  ll best_ans = ans;
+  ll cur_pos = vv[taken_intervals[z]].r;
+
+  for(int g = t; g < sz(for_later_use); g++) {
+    if(vv[for_later_use[g]].l >= cur_pos) {
+      break;
+    }
+
+    need_to_take--;
+    ans += 2;
+
+    if (need_to_take == 0) {
+      ans -= 2;
+      ll nxt = vv[for_later_use[g]].l;
+      if (z - 1 >= 0) {
+        nxt = max(vv[for_later_use[g]].l, vv[taken_intervals[z - 1]].r);
+        need_to_take = vv[taken_intervals[z - 1]].r - vv[taken_intervals[z - 1]].l + 1;
+      }
+      ans -= vv[taken_intervals[z]].l - nxt;
+      cur_pos = nxt;
+      z--;
+    }
+    else {
+      ans--;
+    }
+    best_ans = min(best_ans, ans);
+    if(z == -1) {
+      break;
+    }
+  }
+
+  ps(best_ans);
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while(t--) {
+    re(n, k);
+    FOR(i, 0, n) {
+      re(l[i]);
+    }
+    FOR(i, 0, n) {
+      re(r[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

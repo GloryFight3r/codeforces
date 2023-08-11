@@ -9,6 +9,7 @@
 #include <random>
 #include <array>
 #include <chrono>
+#include <unordered_map>
 #include <bitset>
 
 using namespace std;
@@ -188,8 +189,73 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+const int mxP = 1e7 + 5;
+
+int n, a[mxN];
+vi primes;
+bool no_prime[mxP];
+
+void find_primes() {
+  FOR(i, 2, sqrt(mxP)) {
+    if(!no_prime[i]) {
+      primes.pb(i);
+    }
+    for(int j = 1LL * i * i; j < mxP; j += i) {
+      no_prime[j] = true;
+    }
+  }
+}
+
+int solve() {
+  unordered_map <int, int> mm;
+
+  FOR(i, 0, n) {
+    int k = a[i];
+
+    while(k != 1) {
+      for(auto pp : primes) {
+        while(k % pp == 0) {
+          mm[pp]++;
+          k /= pp;
+        }
+        if(k == 1) break;
+        else if(!no_prime[k]) {
+          mm[k]++;
+          k = 1;
+          break;
+        }
+        //else if(k == 1) break;
+      }
+    }
+  }
+  int ans = 0;
+  int ost = 0;
+
+  trav(x, mm) {
+    //DBG(x.f, x.s);
+    ans += x.s / 2;
+    ost += x.s % 2;
+  }
+
+  ans += ost / 3;
+
+  return ans;
+}
+
 int main() {
 	setIO();
+
+  find_primes();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    FOR(i, 0, n) {
+      re(a[i]);
+    }
+    ps(solve());
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

@@ -10,6 +10,7 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <queue>
 
 using namespace std;
 
@@ -188,8 +189,51 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+str vv;
+
+void solve() {
+  int up = 0;
+  int ind = sz(vv) - 1;
+  for (int i = sz(vv) - 1; i >= 0; i--) {
+    if (up) {
+      if (vv[i] == '9') {
+        up = 1; 
+      }
+      else {
+        vv[i] = vv[i] + 1;
+        ind = i;
+        up = 0;
+      }
+    }
+    if ((vv[i] - '0') >= 5) {
+      up = 1;
+    }
+  }
+  if(up) {
+    ind = -1;
+    pr(1);
+  }
+  else {
+    for (int i = 0; i <= ind; i++) {
+      pr(vv[i]);
+    }
+  }
+  for (int i = ind + 1; i < sz(vv); i++) {
+    pr('0');
+  }
+  ps();
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(vv);
+
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

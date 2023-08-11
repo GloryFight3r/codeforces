@@ -188,8 +188,22 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+str a;
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(a);
+    const str ss = "codeforces";
+    int ans = 0;
+    for(int i = 0; i < sz(a); i++) {
+      if (ss[i] != a[i]) ans++;
+    }
+    ps(ans);
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

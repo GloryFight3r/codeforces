@@ -188,8 +188,59 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, k, x[mxN], c[mxN];
+
+void solve() {
+  int prev = 0, prev_len = 0;
+  FOR(i, 0, k) {
+    if (c[i] - prev > x[i] - prev_len) {
+      //DBG(c[i], prev, x[i], prev_len);
+      ps("NO");
+      return;
+    }
+    prev = c[i];
+    prev_len = x[i];
+  }
+  ps("YES"); 
+  prev = prev_len = 3;
+  pr("vwx");
+  int z = 0;
+  int rpt = 0;
+  //DBG("DSA");
+  FOR(i, 0, k) {
+    //DBG("DSA");
+    while(prev_len < x[i]) {
+      //DBG(prev, c[i]);
+      if(prev < c[i]) {
+        pr(char(z + 'a'));
+        prev++;
+      }
+      else {
+        pr(char(21 + rpt + 'a'));
+        rpt = (rpt + 1) % 3;
+      }
+      prev_len++;
+    }
+    z++;
+  }
+  ps();
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n, k);
+    FOR(i, 0, k) {
+      re(x[i]);
+    }
+    FOR(i, 0, k) {
+      re(c[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

@@ -67,7 +67,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 2e5+5;
+const int mxN = 1e6+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -188,8 +188,60 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n;
+ll sm[mxN];
+
+ll get_sum(int l, int r) {
+  return sm[r] - sm[l - 1];
+}
+
+void precomp() {
+  sm[1] = 1;
+  FOR(i, 2, mxN) {
+    sm[i] = sm[i - 1] + (1LL * i * i);
+  }
+}
+
+ll lvl_min[mxN], lvl_max[mxN];
+
+ll solve() {
+  int lvl = 1, cur_n = 1;
+  while (true) {
+    lvl_min[lvl] = cur_n;
+    lvl_max[lvl] = cur_n + lvl - 1;
+    if (cur_n + lvl > n) {
+      break;
+    }
+    else {
+      cur_n += lvl;
+      lvl++;
+    }
+  }  
+  ll ans = 0;
+  ll l = n, r = n;
+  while (lvl) {
+    ans += get_sum(l, r);
+    l -= lvl;
+    l = max(l, lvl_min[lvl - 1]);
+    r -= lvl;
+    r += 1;
+    r = min(r, lvl_max[lvl - 1]);
+    lvl--;
+  }
+  return ans;
+}
+
 int main() {
 	setIO();
+
+  precomp();
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+
+    ps(solve());
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

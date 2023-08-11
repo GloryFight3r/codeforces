@@ -1,15 +1,9 @@
 /*
- * Fishing for salmon
+ * The greatest minds are capable of the greatest
+ * vices and the greatest virtues
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -188,8 +182,18 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n;
+
 int main() {
 	setIO();
+		
+	int t; re(t);
+
+	while(t--) {
+		re(n);
+		
+		ps((n + 1) / 2);
+	}
 
 	return 0;
 	//read stuff at the bottom ffs

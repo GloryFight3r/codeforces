@@ -10,6 +10,8 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <queue>
+#include <set>
 
 using namespace std;
 
@@ -188,8 +190,80 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, l, r, nm[mxN];
+vi graph[mxN];
+bool vis[mxN];
+
+int dfs(int v, int p) {
+  vis[v] = true;
+  int cnt = 1;
+  trav(x, graph[v]) {
+    if(x == p || vis[x]) continue;
+    cnt += dfs(x, v);
+  }
+  return cnt;
+}
+
+void determine_states() {
+  set <pi> ss;
+  vi cnt(n, 0);
+  FOR(i, 1, n + 1) {
+    ss.insert({0, i});
+  }
+  ss.insert({l, 0});
+  cnt[0] = l;
+
+  FOR(i, l, n + 1) {
+    pi t = *ss.begin();
+    //DBG(i, t);
+    nm[i] = t.s;
+    cnt[t.s]++;
+    ss.erase(t);
+    ss.insert({t.f + 1, t.s});
+
+    if(i >= r) {
+      ss.erase({cnt[nm[i - r]], nm[i - r]});
+      cnt[nm[i - r]]--;
+      ss.insert({cnt[nm[i - r]], nm[i - r]});
+    }
+  }
+}
+
+void solve() {
+  determine_states();
+
+  int res = 0;  
+
+  FOR(i, 1, n + 1) {
+    if(!vis[i]) {
+      int z = dfs(i, i);
+      if (z <= l + r - 1) {
+        res ^= z / l;
+      }
+    }
+  }
+  if (res == 0) {
+    ps("Bob");
+  }
+  else {
+    ps("Alice");
+  }
+}
+
 int main() {
 	setIO();
+
+  re(n, l, r);
+
+  int v, w;
+
+  FOR(i, 0, n) {
+    re(v, w);
+    graph[v].pb(w);
+    graph[w].pb(v);
+  }
+
+  solve();
 
 	return 0;
 	//read stuff at the bottom ffs

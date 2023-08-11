@@ -188,8 +188,37 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[2][mxN];
+
+bool solve() {
+  int mm = min(a[0][n-1], a[1][n - 1]);
+  int zz = max(a[0][n-1], a[1][n - 1]);
+
+  for(int i = 0; i < n - 1; i++) {
+    if (min(a[0][i], a[1][i]) > mm || max(a[0][i], a[1][i]) > zz) {
+      return false;
+    }  
+  }
+
+  return true;
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while(t--) {
+    re(n);
+    FOR(i, 0, n) {
+      re(a[0][i]);
+    }
+    FOR(i, 0, n) {
+      re(a[1][i]);
+    }
+
+    ps(solve()?"YES":"NO");
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

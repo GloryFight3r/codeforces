@@ -188,8 +188,36 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN];
+
+void solve() {
+  int even = 0, odd = 0;
+  FOR(i, 0, n) {
+    if (a[i] % 2 == 0) {
+      even++;
+    }
+    else {
+      odd++;
+    }
+  }
+
+
+  ps((odd % 2 == 0)? "YES":"NO");
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    FOR (i, 0, n) {
+      re(a[i]);
+    }
+
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

@@ -191,6 +191,43 @@ tcTUU> void DBG(const T& t, const U&... u) {
 int main() {
 	setIO();
 
+  int t; re(t);
+
+  int l, r;
+
+  while(t--) {
+    re(l, r);
+    if (r - l >= 100) {
+      if (l <= 90) {
+        ps("109");
+      }
+      else if(l >= 100) {
+        cout << l/100 <<  0 << 9 << "\n";
+      }
+    }
+    else {
+
+      int ans = 0;
+      int answer = l;
+      for(int j = l; j <= r; j++) {
+        int z = j;
+
+        int mm = 10;
+        int mx = -1;
+        while(z) {
+          mm = min(mm, z % 10);
+          mx = max(mx, z % 10);
+          z /= 10;
+        }
+        if (mx - mm > ans) {
+          ans = mx - mm;
+          answer = j;
+        }
+      }
+      ps(answer);
+    }
+  }
+
 	return 0;
 	//read stuff at the bottom ffs
 }

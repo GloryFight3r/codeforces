@@ -188,8 +188,46 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n;
+
+void solve() {
+  if(n == 1) {
+    ps(1);
+    return;
+  }
+  if(n % 2 == 1) {
+    ps(-1);
+    return;
+  }
+  int l = 2, r = n;
+  int cur = 1;
+  int z = 0;
+  pr(n, " ");
+  for(int i = 0; i < n - 1; i++) {
+    if (z == 0) {
+      pr(r - cur, " ");
+      cur = r;
+      r--;
+    }
+    else {
+      pr(n - cur + l, " ");
+      cur = l;
+      l++;
+    }
+    z ^= 1;
+  }
+  ps();
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while(t--) {
+    re(n);
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

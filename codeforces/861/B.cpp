@@ -1,8 +1,16 @@
 /*
- * arabic trap
+ * Fishing for salmon
 */
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <math.h>
+#include <vector>
+#include <complex>
+#include <algorithm>
+#include <random>
+#include <array>
+#include <chrono>
+#include <bitset>
 
 using namespace std;
 
@@ -60,7 +68,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 2e5+5;
+const int mxN = 3e5+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -181,34 +189,56 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
-int n, a[mxN];
+int n, m;
+vi vt[mxN];
 
-void precompute(vi comp) {
-	ll sum = 0;
-	FOR(i, 0, n) {
-		sum += a[i];
-	}
-
-	comp.push_back(sum);
-	ll time_up_to_i = a[0];
-
-	for(int i = 1; i < n; i++) {
-		ll remaining = a[i] - time_up_to_i;
-	}
+ll solve() {
+  ll answer = 0;
+  FOR(i, 0, m) {
+    sort(vt[i].begin(), vt[i].end());
+    ll sm = 0;
+    for(ll x : vt[i]) {
+      sm += x;
+    }
+    for(int j = 0; j < vt[i].size(); j++) {
+      int start_from = j;
+      ll cnt = 0;
+      for(int z = j; z < vt[i].size() && vt[i][z] == vt[i][j]; z++) {
+        cnt++;
+        start_from = z;
+        sm -= vt[i][j];
+      }
+      answer += (sm - (vt[i][j] * (vt[i].size() - start_from - 1))) * cnt;
+      j = start_from;
+    }
+  }
+  return answer;
 }
 
 int main() {
 	setIO();
 
-	re(n);
-	FOR(i, 0, n) {
-		re(a[i]);
-	}
+  int t; re(t);
+
+  while(t--) {
+    re(n, m);
+    int x;
+    FOR(j, 0, m) {
+      vt[j].clear();
+    }
+    FOR(i, 0, n) {
+      FOR(j, 0, m) {
+        re(x);
+        vt[j].pb(x);
+      }
+    }
+    ps(solve());
+  }
 
 	return 0;
 	//read stuff at the bottom ffs
 }
-/* things to keep in mind 
+/* things to keep in mind
  * int overflow, array bounds
  * any special cases
  * always do something
@@ -216,4 +246,4 @@ int main() {
  * THINK ABOUT OTHER APPROACHES
  * DON'T NON STOP CHECK OTHERS
  * DON'T PANIC
-*/ 
+*/

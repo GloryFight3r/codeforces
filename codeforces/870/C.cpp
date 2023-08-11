@@ -188,8 +188,47 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+const int mxP = 1e6 + 5;
+
+int n, m;
+bool prime[mxP];
+vi primes;
+
+void precomp() {
+  for(int i = 2; i < mxP; i++) {
+    if(!prime[i]) {
+      primes.pb(i);
+    }
+    for(ll j = 1LL * i * i; j < mxP; j += i) {
+      prime[j] = true;
+    }
+  }
+}
+
+bool solve() {
+  if(n == 1) return true;
+  if (m >= n) return false;
+  for(auto x : primes) {
+    if(x > m) break;
+    if(1LL * x * x > n) {
+      break;
+    }
+    if(n % x == 0) return false;
+  }
+  return true;
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+  precomp();
+
+  while (t--) {
+    re(n, m);
+
+    ps(solve()?"YES":"NO");
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

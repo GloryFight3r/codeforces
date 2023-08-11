@@ -10,6 +10,7 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <algorithm>
 
 using namespace std;
 
@@ -188,8 +189,40 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, k, b[mxN];
+pi a[mxN];
+
+void solve() {
+  sort(a, a + n);
+  sort(b, b + n);
+
+  vi answer(n);
+
+  FOR(i, 0, n) {
+    answer[a[i].s] = b[i];
+  }
+  FOR(i, 0, n) {
+    pr(answer[i], " ");
+  }
+  ps();
+}
+
 int main() {
 	setIO();
+  
+  int t; re(t);
+
+  while (t--) {
+    re(n, k);
+    FOR(i, 0, n) {
+      re(a[i].f);
+      a[i].s = i;
+    }
+    FOR(i, 0, n) {
+      re(b[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

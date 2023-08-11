@@ -188,8 +188,27 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n;
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+
+    int c_sum = (1 + n) * n / 2;
+
+    int to_add = c_sum % n;
+
+    pr(1 + to_add, " ");
+
+    FOR(i, 2, n + 1) {
+      pr(i, " ");
+    } 
+    ps();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

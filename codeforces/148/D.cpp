@@ -191,6 +191,8 @@ tcTUU> void DBG(const T& t, const U&... u) {
 int main() {
 	setIO();
 
+  
+
 	return 0;
 	//read stuff at the bottom ffs
 }

@@ -67,7 +67,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 2e5+5;
+const int mxN = 1e3+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -188,8 +188,35 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN], b[mxN * mxN];
+
+void solve() {
+  sort(b, b + (n * (n - 1) / 2));
+
+  int k = 0;
+  for (int i = 0; i < n - 1; i++) {
+    a[i] = b[k];
+    k += n - i - 1;
+  }
+  a[n - 1] = a[n - 2];
+  FOR(i, 0, n) {
+    pr(a[i], " ");
+  }
+  ps();
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    FOR (i, 0, n * (n - 1) / 2) {
+      re(b[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

@@ -10,6 +10,7 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <set>
 
 using namespace std;
 
@@ -188,8 +189,28 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n;
+str a;
+
+void solve() {
+  set <int> ss;
+  for(int i = 0; i < sz(a) - 1; i++){
+    ss.ins(a[i] * 100 + a[i + 1]);
+  }
+  ps(sz(ss));
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    re(a);
+
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

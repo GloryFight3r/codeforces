@@ -2,14 +2,7 @@
  * Fishing for salmon
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -188,8 +181,29 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN];
+
+void solve() {
+  int z = 0;
+  for(int i = 0; i < n; i++) {
+    z = __gcd(z, abs((i + 1) - a[i]));
+  }
+  ps(z);
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    FOR(i, 0, n) {
+      re(a[i]);
+    }
+
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

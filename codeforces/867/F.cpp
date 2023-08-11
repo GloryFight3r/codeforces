@@ -9,6 +9,7 @@
 #include <random>
 #include <array>
 #include <chrono>
+#include <algorithm>
 #include <bitset>
 
 using namespace std;
@@ -188,8 +189,76 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, k, c;
+vi graph[mxN];
+int depth[mxN];
+
+void dfs(int v, int p) {
+  depth[v] = 0;
+  trav(x, graph[v]) {
+    if(x != p) {
+      dfs(x, v);
+      depth[v] = max(depth[v], depth[x] + 1);
+    }
+  }
+}
+
+ll rec(int v, int p, int times, int top_best) {
+  vpi vv;
+  int z = 0;
+  trav(x, graph[v]) {
+    if (x == p) continue;
+    vv.pb({depth[x] + 1, x});
+  }
+  z = sz(vv);
+  sort(vv.begin(), vv.end());
+
+  ll ans = (1LL*max(depth[v], top_best) * k) - (1LL*c * times);
+
+  //ps(v, p, times, top_best, ans);
+
+  trav(x, graph[v]) {
+    if(x == p) continue;
+    if(z == 1) {
+      ans = max(ans, rec(x, v, times + 1, top_best + 1));
+    }
+    else {
+      int take = vv[z - 1].f;
+      if(vv[z - 1].s == x) take = vv[z - 2].f;
+
+      ans = max(ans, rec(x, v, times + 1, 1 + max(top_best, take)));
+    }
+  }
+  return ans;
+}
+
+ll solve() {
+  dfs(1, 1);
+
+  return rec(1, 1, 0, 0);
+}
+
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n, k, c);
+
+    FOR(i, 1, n + 1) {
+      graph[i].clear();
+    }
+
+    int v, w;
+    FOR(i, 0, n - 1) {
+      re(v, w);
+      graph[v].pb(w);
+      graph[w].pb(v);
+    }
+    ps(solve());
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

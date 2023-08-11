@@ -1,15 +1,8 @@
 /*
- * Fishing for salmon
+ * Stay strong brother
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -188,13 +181,68 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, q;
+vi graph[mxN];
+int br[mxN], level[mxN], save_br[mxN];
+
+void dfs(int v, int p, int lvl) {
+	level[v] = lvl;
+	br[lvl]++;
+	save_br[lvl]++;
+
+	trav(x, graph[v]) {
+		if(x == p) continue;
+		dfs(x, v, lvl + 1);
+	}
+}
+
+int solve() {
+	FOR(i, 1, n + 1) {
+		br[i] = save_br[i] = 0;
+	}
+	dfs(1, 1, 1);
+
+	int tmp_level = 1;
+
+	int v, ans = 0;
+	for(int i = 0; i < q; i++) {
+		re(v);
+
+		br[tmp_level]--;
+		
+		if(br[tmp_level] == 0) {
+			ans += save_br[tmp_level];
+			tmp_level++;
+		}
+	}
+	return ans;
+}
+
 int main() {
 	setIO();
+
+	int t; re(t);
+
+	for(int i = 1; i <= t; i++) {
+		re(n, q);
+
+		FOR(j, 1, n + 1) {
+			graph[j].clear();
+		}
+
+		int v, w;
+		FOR(i, 0, n - 1) {
+			re(v, w);
+			graph[v].pb(w);
+			graph[w].pb(v);
+		}
+		printf("Case #%d: %d\n", i, solve());
+	}
 
 	return 0;
 	//read stuff at the bottom ffs
 }
-/* things to keep in mind
+/* things to keep in mind 
  * int overflow, array bounds
  * any special cases
  * always do something
@@ -202,4 +250,4 @@ int main() {
  * THINK ABOUT OTHER APPROACHES
  * DON'T NON STOP CHECK OTHERS
  * DON'T PANIC
-*/
+*/ 

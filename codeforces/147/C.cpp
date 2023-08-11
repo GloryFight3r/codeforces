@@ -188,8 +188,47 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+str a;
+
+void solve() {
+  int n = sz(a);
+  int ans = n;
+
+  for(int i = 0; i <= 'z' - 'a'; i++) {
+    str b = a;
+    int tmp_ans = 0;
+    while(true) {
+      str g = "";
+      int lst_ind = -2;
+      for(int z = 0; z < sz(b); z++) {
+        if (b[z] - 'a' != i && z - lst_ind > 1) {
+          lst_ind = z;
+        }
+        else {
+          g += b[z];
+        }
+      }
+      b = g;
+      if(lst_ind == -2) {
+        break;
+      }
+      tmp_ans++;
+    }
+    ans = min(tmp_ans, ans);
+  }
+  ps(ans);
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while(t--) {
+    re(a);
+
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

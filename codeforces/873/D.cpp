@@ -10,6 +10,8 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <set>
+#include <stack>
 
 using namespace std;
 
@@ -67,7 +69,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 2e5+5;
+const int mxN = 5e3+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -188,8 +190,64 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN];
+int bigger[mxN][mxN];
+
+int get_pos(int i, int j) {
+  if (i == 0) {
+    return bigger[j][j];
+  }
+  return bigger[j][j] - bigger[j][i - 1];
+}
+
+void solve() {
+  ll ans = 0;
+  FOR(i, 1, n) {
+    bigger[i][0] = (a[0] <= a[i]);
+    FOR(j, 1, i) {
+      bigger[i][j] = bigger[i][j - 1] + (a[j] <= a[i]);
+    }
+    if (i != 0)
+      bigger[i][i] = bigger[i][i - 1];
+  }
+  FOR(i, 0, n) {
+    int prv = 0;
+    stack <pi> st;
+    FOR(j, i, n) {
+      int t_s = (j - i + 1);
+      int g = get_pos(i, j);
+
+      int to_l = i + g;
+
+      while(!st.empty() && st.top().s >= to_l) {
+        to_l = min(to_l, st.top().f);
+        prv -= st.top().s - st.top().f;
+        st.pop();
+      }
+    
+      prv += j - to_l;
+      st.push({to_l, j});
+
+      ans += prv;
+    }
+    //ans += prv;
+  }
+  ps(ans);
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+
+    FOR(i, 0, n) {
+      re(a[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

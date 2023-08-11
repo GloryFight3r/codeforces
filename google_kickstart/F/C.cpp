@@ -1,15 +1,8 @@
 /*
- * Fishing for salmon
+ * Stay strong brother
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -188,13 +181,93 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+struct prod {
+	ll q, w, v;
+
+	prod() {}
+
+	prod(ll _q, ll _w, ll _v) {
+		q = _q; w = _w; v = _v;
+	}
+
+	bool operator<(prod other) const {
+		return v < other.v;
+	}
+} a[mxN];
+
+bool my_comp(const prod v, const prod w) {
+	return v.w < w.w;
+}
+
+ll d, n, x;
+
+ll solve() {
+	sort(a, a + n, my_comp);
+	
+	ll start_day = d * x;
+
+	priority_queue <prod> prods;
+	ll answer = 0;
+
+	for(int i = 0; i < n; i++) {
+		if(!prods.empty())
+			start_day = min(start_day, (d - prods.top().w) * x);
+
+		while(!prods.empty()) {
+			ll start_from = max(0LL, min(start_day, (d - a[i].w) * x));
+
+			if(start_from < start_day) {
+				auto temp = prods.top(); prods.pop();
+
+				ll take = min(temp.q, start_day - start_from);
+				temp.q -= take;
+				answer += take * temp.v;
+				start_day -= take;
+
+				if(temp.q) {
+					prods.push(temp);
+					break;
+				}
+			}
+			else {
+				break;
+			}
+		}
+		prods.push(a[i]);
+	}
+	while(!prods.empty() && start_day) {
+		start_day = min(start_day, (d - prods.top().w) * x);
+		auto temp = prods.top(); prods.pop();
+
+		ll take = min(temp.q, start_day);
+		temp.q -= take;
+		answer += take * temp.v;
+		start_day -= take;
+	}
+	return answer;
+}
+
 int main() {
 	setIO();
+
+	int t; re(t);
+
+	FOR(i, 1, t + 1) {
+		re(d, n, x);
+		ll q, w, v;
+
+		FOR(i, 0, n) {
+			re(q, w, v);
+			a[i] = prod(q, w, v);
+		}
+
+		printf("Case #%d: %lld\n", i, solve());
+	}
 
 	return 0;
 	//read stuff at the bottom ffs
 }
-/* things to keep in mind
+/* things to keep in mind 
  * int overflow, array bounds
  * any special cases
  * always do something
@@ -202,4 +275,4 @@ int main() {
  * THINK ABOUT OTHER APPROACHES
  * DON'T NON STOP CHECK OTHERS
  * DON'T PANIC
-*/
+*/ 

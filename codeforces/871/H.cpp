@@ -188,8 +188,37 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, k, a[mxN], dp[(1 << 6)];
+
+void solve() {
+  FOR(i, 0, (1 << 6)) dp[i] = 0;
+  FOR(i, 0, n) {
+    FOR(mask, 0, (1 << 6)) {
+      dp[mask & a[i]] = add(dp[mask], dp[mask & a[i]]);
+    }
+
+    dp[a[i]] = add(dp[a[i]], 1);
+  }
+  int ans = 0;
+  FOR(i, 0, (1 << 6)) {
+    if(pcnt(i) == k)
+      ans = add(ans, dp[i]);
+  }
+  ps(ans);
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n, k);
+    FOR (i, 0, n) {
+      re(a[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

@@ -10,6 +10,8 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <algorithm>
+#include <set>
 
 using namespace std;
 
@@ -188,8 +190,109 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n;
+str a;
+
+void solve() {
+  if(n % 2 == 1) {
+    ps(-1);
+    return;
+  }
+  vi cnt(32, 0);
+  set <int> pp[32][32];
+
+  for(int i = 0; i < 32; i++) {
+    for(int j = 0; j < 32; j++) {
+      pp[i][j] = set<int>();
+    }
+  }
+  //ps("DAS");
+
+  //return;
+
+  for(int i = 0; i < n; i++) {
+    cnt[a[i] - 'a']++;
+
+    if(cnt[a[i] - 'a'] > n / 2) {
+      ps(-1);
+      return;
+    }
+  }
+  //ps("DSAA");
+  //return;
+  for(int i = 0; i < n / 2; i++) {
+    pp[a[i]-'a'][a[n - i - 1]-'a'].ins(i);
+  }
+  int ans = 0;
+  for(int i = 0; i < n/2; i++) {
+    //ps(a[i], a[n - i - 1]);
+    if(a[i] == a[n - i - 1]) {
+      int t = a[i] - 'a';
+      bool fl = false;
+      vpi sel;
+      for(int z = 0; z < 32; z++) {
+        if(z != t) {
+          sel.pb({sz(pp[z][z]), z});
+        }
+      }
+      sort(sel.begin(), sel.end());
+      if(sz(sel)) {
+        int z = sel[sz(sel) - 1].s;
+        if(z != t && sz(pp[z][z]) != 0) {
+           int h = *pp[z][z].begin();
+            pp[t][t].erase(i);
+            pp[z][z].erase(h);
+
+            swap(a[i], a[h]);
+
+            pp[z][t].ins(i);
+            pp[z][t].ins(h);
+            ans++;
+            //ps(i, h, "GGGG");
+            fl = true;
+            //break;
+        }
+      }
+      if(!fl)
+      for(int z = 0; z < 32; z++) {
+        for(int g = 0; g < 32; g++) {
+          if(z != t && g != t && sz(pp[z][g]) != 0) {
+            int h = *pp[z][g].begin();
+            pp[t][t].erase(i);
+            pp[z][g].erase(h);
+
+            swap(a[i], a[h]);
+
+            pp[z][t].ins(i);
+            pp[g][t].ins(h);
+            ans++;
+            fl = true;
+            break;
+          }
+        }
+        if(fl) break;
+      }
+      //if(!fl) {
+      //  ps("DASDASDSADASDSA");
+      //}
+      //assert(!fl);
+    }
+  }
+  //ps(a);
+  ps(ans);
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while(t--) {
+    re(n);
+    re(a);
+
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

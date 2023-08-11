@@ -188,8 +188,50 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, k, a[mxN], b[mxN];
+
+void rec(int l, int r, int tmp, int cur_nmb) {
+  if ((r - l) % 2 < 2) {
+    return;
+  }
+  if (tmp < 0) {
+    return;
+  }
+  int n_l = l;
+  int n_r = r;
+  FOR(i, l, r) {
+    if ((1 << tmp) & a[i]) {
+      b[n_l++] = a[i];
+    }
+    else {
+      b[n_r--] = a[i];
+    }
+  }
+  FOR(i, l, r) {
+    a[i] = b[i];
+  }
+
+  int first = rec(l, n_l, tmp - 1, cur_nmb);
+  int second = rec(n_l, r, tmp - 1, cur_nmb ^ (1 << tmp));
+
+}
+
+void solve() {
+  rec(0, n, k - 1, 0)
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n, k);
+    FOR(i, 0, n) {
+      re(a[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

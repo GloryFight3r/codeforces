@@ -188,8 +188,29 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int x, k;
+
+void solve() {
+  if(x % k != 0) {
+    ps(1);
+    ps(x);
+  }
+  else {
+    ps(2);
+    ps(x - 1, 1);
+  }
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(x, k);
+
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

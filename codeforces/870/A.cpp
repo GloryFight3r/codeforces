@@ -10,6 +10,7 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <algorithm>
 
 using namespace std;
 
@@ -188,8 +189,48 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN];
+
+void solve() {
+  sort(a, a + n);
+  
+  int liars = 0;
+  for(int i = 0; i < n; i++) {
+    if (n - liars == i) {
+      break;
+    }
+    if (n - a[i] <= i) {
+      liars = n - i;
+      break;
+    }
+    liars = max(liars, a[i]);
+  }
+  for (int i = n - liars; i < n; i++) {
+    if(liars == a[i]) {
+      ps(-1);
+      return;
+    }
+  }
+  if (liars == n) {
+    ps(-1);
+  }
+  else {
+    ps(liars);
+  }
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    FOR(i, 0, n) {
+      re(a[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

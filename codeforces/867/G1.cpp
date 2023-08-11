@@ -10,6 +10,7 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <unordered_map>
 
 using namespace std;
 
@@ -188,8 +189,48 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN], mm[(int)1e6 + 5];
+
+void solve() {
+  for(int i = 0; i < n; i++) {
+    mm[a[i]]++;
+  }
+  sort(a, a + n);
+  ll ans = 0;
+  for(int b = 1; b <= 1000; b++) {
+    FOR(i, 0, n) {
+     if(1LL * a[i] * b * b > 1e6) {
+        break;
+      }
+      if(b == 1) {
+        int g1 = mm[a[i]] - 1;
+        ans += max(0LL, 1LL * g1 * (g1 - 1));
+      }
+      else {
+        int g1 = mm[1LL*a[i] * b];
+        int g2 = mm[1LL*a[i] * b * b];
+        ans += max(0LL, 1LL * g1 * g2);
+      }
+    }
+  }
+  for(int i = 0; i < n; i++) {
+    mm[a[i]] = 0;
+  }
+  ps(ans);
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while(t--) {
+    re(n);
+    FOR(i, 0, n) {
+      re(a[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

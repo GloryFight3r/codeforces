@@ -1,15 +1,9 @@
 /*
- * Fishing for salmon
+ * The greatest minds are capable of the greatest
+ * vices and the greatest virtues
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -188,8 +182,82 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN];
+
+int solve() {
+	int ans = 0;
+	int zero_cnt = 0;
+	ll sum = 0;
+	map <ll, int> ss;
+	bool hv_seen = 0;
+
+	for(int i = 0; i < n; i++) {
+		sum += a[i];
+		//DBG(i, sum);
+		if(a[i] == 0) {
+			hv_seen = 1;
+			if(i > 0 && a[i - 1] == 0) ss.clear();
+
+			if(zero_cnt && !ss.empty()) {
+				int mx = 0;
+				trav(x, ss) {
+					mx = max(mx, x.s);
+				}
+				ans += mx;
+				//DBG(mx);
+				zero_cnt = 0;
+			}
+
+			ss.clear();
+			ss[sum]++;
+			if(zero_cnt) {
+				ans++;
+			}
+			else {
+				zero_cnt = 1;
+			}
+		}
+		else {
+			if(!hv_seen && sum == 0) ans++;
+			ss[sum]++;
+		}
+	}
+
+	//DBG(ans);
+
+	if(a[n - 1] == 0) ss.clear();
+	if(zero_cnt && !ss.empty()) {
+		int mx = 0;
+		trav(x, ss) {
+			mx = max(mx, x.s);
+		}
+		ans += mx;
+		zero_cnt = 0;
+	}
+
+	ss.clear();
+	if(zero_cnt) {
+		ans++;
+	}
+	else {
+		zero_cnt = 1;
+	}
+	
+	return ans;
+}
+
 int main() {
 	setIO();
+
+	int t; re(t);
+
+	while(t--) {
+		re(n);
+		FOR(i, 0, n) {
+			re(a[i]);
+		}
+		ps(solve());
+	}
 
 	return 0;
 	//read stuff at the bottom ffs

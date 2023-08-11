@@ -2,14 +2,7 @@
  * Fishing for salmon
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -188,8 +181,75 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+ll n, l[mxN], r[mxN];
+
+bool check(ll x, ll y, vpl& vX, vpl& vY) {
+  vector <bool> visited(n, 0);
+  ll p1 = n - 1, p2 = n - 1;
+
+  //ps(x, y);
+  while(true) {
+    //ps(x, y);
+    while(p1 >= 0 && visited[vX[p1].s]) {
+      p1--;
+    }
+    while(p2 >= 0 && visited[vY[p2].s]) {
+      p2--;
+    }
+    if(p1 >= 0 && vX[p1].f == x) {
+      y -= r[vX[p1].s];
+      //ps("DSA");
+      visited[vX[p1].s] = true;
+    }
+    else if(p2 >= 0 && vY[p2].f == y) {
+      x -= l[vY[p2].s];
+      //ps("ASD", r[vY[p2].s]);
+      visited[vY[p2].s] = true;
+    }
+    else {
+      if(p1 == -1 && p2 == -1) break;
+      return false;
+    }
+  }
+  return true;
+}
+
+void solve() {
+  ll area = 0;
+  vpl vv, v2;
+  for (int i = 0; i < n; i++) {
+    area += 1LL * l[i] * r[i];
+    vv.pb({l[i], i});
+    v2.pb({r[i], i});
+  }
+  sort(vv.begin(), vv.end());
+  sort(v2.begin(), v2.end());
+
+  set<pl> ans;
+  if(area % vv[n - 1].f == 0 && check(vv[n - 1].f, area / vv[n - 1].f, vv, v2)) {
+    ans.ins({vv[n - 1].f, area / vv[n - 1].f});
+  }
+  if(area % v2[n - 1].f == 0 && check(area / v2[n - 1].f, v2[n - 1].f, vv, v2)) {
+    ans.ins({area / v2[n - 1].f, v2[n - 1].f});
+  }
+  ps(sz(ans));
+  for(auto x : ans) {
+    ps(x);
+  }
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while(t--) {
+    re(n);
+    FOR(i, 0, n) {
+      re(l[i], r[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

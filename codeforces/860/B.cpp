@@ -67,7 +67,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 2e5+5;
+const int mxN = 5e4+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -188,8 +188,57 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int m, n[mxN];
+vector<int> a[mxN];
+
+bool solve(int* ans) {
+  bool banned[mxN];
+  for(int i = 1; i < mxN; i++) {
+    banned[i] = false;
+  }
+  for(int i = m - 1; i >= 0; i--) {
+    bool fl = false;
+    for (auto x : a[i]) {
+      if(!banned[x] && fl == false) {
+        ans[i] = x;
+        fl = true;
+      }
+      banned[x] = true;
+    }
+    if(!fl) return false;
+  }
+  return true;
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+  int x;
+  int* ans = new int[mxN];
+
+  while(t--) {
+    re(m);
+    FOR(i, 0, m) {
+      re(n[i]);
+      a[i].clear();
+      for(int j = 0; j < n[i]; j++) {
+        re(x);
+        a[i].pb(x);
+      }
+    }
+
+    bool fl = solve(ans);
+    if(fl) {
+      for(int i = 0; i < m; i++) {
+        pr(ans[i], " ");
+      }
+      ps();
+    }
+    else {
+      ps(-1);
+    }
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

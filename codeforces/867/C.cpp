@@ -188,8 +188,26 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+ll n;
+
+ll sum(ll l, ll r) {
+  if(l > r) return 0;
+  return (l + r) * (r - l + 1) / 2;
+}
+
+void solve() {
+  ps(26 + (2LL * sum(5, n)) + (n - 4));
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while(t--) {
+    re(n);
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

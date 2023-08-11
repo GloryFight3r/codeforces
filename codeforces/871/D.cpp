@@ -10,6 +10,7 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <queue>
 
 using namespace std;
 
@@ -188,8 +189,36 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, m;
+
+bool solve() {
+  queue <int> qq;
+
+  qq.push(n);
+
+  while(!qq.empty()) {
+    int z = qq.front(); qq.pop();
+
+    if(z == m) return true;
+
+    if (z % 3 == 0) {
+      qq.push(z / 3);
+      qq.push(z / 3 * 2);
+    }
+  }
+  return false;
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n, m);
+
+    ps(solve()?"YES":"NO");
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

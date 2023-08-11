@@ -188,8 +188,43 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN], b[mxN];
+
+void solve() {
+  vi ans;
+  ll biggest = -INF;
+  FOR(i, 0, n) {
+    if (a[i] - b[i] > biggest) {
+      biggest = a[i] - b[i];
+      ans.clear();
+      ans.pb(i + 1);
+    }
+    else if(a[i] - b[i] == biggest) {
+      ans.pb(i + 1);
+    }
+  }
+  ps(sz(ans));
+  for (auto x : ans) {
+    pr(x, " ");
+  }
+  ps();
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    FOR(i, 0, n) {
+      re(a[i]);
+    }
+    FOR(i, 0, n) {
+      re(b[i]);
+    }
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

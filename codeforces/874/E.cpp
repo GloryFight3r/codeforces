@@ -188,10 +188,64 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN];
+vi graph[mxN];
+bool vis[mxN];
+
+bool dfs(int v, int p) {
+  vis[v] = true;
+  int ans = 1;
+  trav(x, graph[v]) { 
+    if(x == p) {
+      return 1;
+    }
+    if(!vis[x]) {
+      return dfs(x, v);
+    }
+  }
+  return 0;
+}
+
+void solve() {
+  int answer = 0;
+  int single = 0;
+  FOR(i, 1, n + 1) {
+    if(vis[i]) continue;
+    int zz = dfs(i, i);
+    if(zz == 1) {
+      single++;
+    }
+    else {
+      answer++;
+    }
+
+    DBG(zz, answer, single);
+  }
+  ps(answer + (single > 0), answer + single);
+}
+
 int main() {
 	setIO();
 
-	return 0;
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+
+    FOR(i, 1, n + 1) {
+      graph[i].clear();
+      vis[i] = false;
+    }
+
+    FOR(i, 0, n) {
+      re(a[i]);
+      //graph[a[i]].pb(i + 1);
+      graph[i + 1].pb(a[i]);
+    }
+    solve();
+  }
+	
+  return 0;
 	//read stuff at the bottom ffs
 }
 /* things to keep in mind

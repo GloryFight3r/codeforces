@@ -188,8 +188,35 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN];
+
+int solve() {
+  int ans = 0;
+  int cr = 0;
+  for (int i = 0; i < n; i++) {
+    if (a[i] == 0) {
+      cr++;
+      ans = max(ans, cr);
+    }
+    else {
+      cr = 0;
+    }
+  }
+  return ans;
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    FOR(i, 0, n) {
+      re(a[i]);
+    }
+    ps(solve());
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

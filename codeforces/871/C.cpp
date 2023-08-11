@@ -10,6 +10,8 @@
 #include <array>
 #include <chrono>
 #include <bitset>
+#include <map>
+#include <algorithm>
 
 using namespace std;
 
@@ -188,8 +190,48 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, a[mxN];
+str s[mxN];
+map <str, vi> mm;
+
+int solve() {
+  int ans1 = mxN, ans2 = mxN;
+  int r_ans = mxN;
+  for (auto x : mm) {
+    sort(x.s.begin(), x.s.end());
+
+    if(x.f == "11") r_ans = min(r_ans, x.s[0]);
+
+    if(x.f[0] == '1') {
+      ans1 = min(ans1, x.s[0]);
+    }
+    if(x.f[1] == '1') {
+      ans2 = min(ans2, x.s[0]);
+    }
+  }
+  
+  if(min(r_ans, ans1 + ans2) >= mxN) {
+    return -1;
+  }
+  else {
+    return min(r_ans, ans1 + ans2);
+  }
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n);
+    mm.clear();
+    FOR(i, 0, n) {
+      re(a[i], s[i]);
+      mm[s[i]].pb(a[i]);
+    }
+    ps(solve());
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

@@ -1,15 +1,9 @@
 /*
- * Fishing for salmon
+ * The greatest minds are capable of the greatest
+ * vices and the greatest virtues
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -188,8 +182,43 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n;
+str a;
+
+int solve() {
+	int ans = 0;
+	for(int i = 0; i < n; i++) {
+		set <int> st;
+		map <int, int> cc;
+		for(int j = i; j >= 0; j--) {
+			// try to add current
+			cc[a[j] - '0']++;
+			st.ins(a[j] - '0');
+
+			int mx = 0;
+			for(int z = 0; z < 10; z++) {
+				mx = max(mx, cc[z]);
+			}
+			if(st.size() >= mx) {
+				ans++;
+			}
+			if(mx >= 11) break;
+		}
+	}
+	return ans;
+}
+
 int main() {
 	setIO();
+
+	int t; re(t);
+
+	while(t--) {
+		re(n);
+		re(a);
+		
+		ps(solve());
+	}
 
 	return 0;
 	//read stuff at the bottom ffs

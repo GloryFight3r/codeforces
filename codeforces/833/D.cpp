@@ -1,15 +1,9 @@
 /*
- * Fishing for salmon
+ * The greatest minds are capable of the greatest
+ * vices and the greatest virtues
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -188,8 +182,85 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int a, b, d;
+
+ll gcdExtended(ll f, ll s, ll* x1, ll* y1) {
+	ll q, r, x2, y2, t;
+	*x1 = 1LL; *y1 = 0LL; x2 = 0; y2 = 1;
+	while (s != 0) {
+		q = f / s; r = f % s; f=s;s=r;//замяна на двойката (a,b) с (b,r)
+		//изчисляване на новите стойности на x1 и x2
+		t=x2; x2=*x1-q*x2; *x1=t;
+		// изчисляване на новите стойности на y1 и y2
+			t=y2; y2=*y1-q*y2; *y1=t;
+	}
+	return d;
+}
+
+ll solve() {
+	ll f = (1LL << 30);
+	ll s = -d;
+	ll y = -(a|b);
+
+	ll g = __gcd(f, s);
+
+	//if(y < 0) g = -g;
+
+	if(y % g != 0) {
+		return -1;
+	}
+
+	f /= g;
+	s /= g;
+	y /= g;
+	
+	ll x1, y1;
+	gcdExtended(f, s, &x1, &y1);
+
+	x1 *= y;
+	y1 *= y;
+
+	//ps(f *x1 + s*y1 == y);
+
+	//DBG(f *x1 + s*y1 == y);
+
+	// xx = max(x1 + ((1.0 * -x1 / s) - 1) * s, x1 + ((1.0 * -x1 / s) + 1) * s);
+
+	/*while(x1 < 0) {
+		x1 -= s;
+		y1 += f;
+	}*/
+
+	ll k = ceil(1.00*x1 / s);
+
+	if(s < 0) {
+		while(k < x1 / s) {
+			k++;
+		}
+	}
+	else{
+		while(k > x1 / s) {
+			k--;
+		}
+	}
+
+
+	x1 -= k * s;
+	y1 += k * f;
+
+	return (x1 << 30) + (a|b);
+}
+
 int main() {
 	setIO();
+
+	int t; re(t);
+
+	while(t--) {
+		re(a, b, d);
+
+		ps(solve());
+	}
 
 	return 0;
 	//read stuff at the bottom ffs

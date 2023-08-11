@@ -188,8 +188,27 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+str a;
+
+void solve() {
+  FOR(i, 1, (sz(a) / 2)) {
+    if(a[i] != a[i - 1]) {
+      ps("YES");
+      return;
+    }
+  }
+  ps("NO");
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(a);
+    solve();
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

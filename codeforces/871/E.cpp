@@ -67,7 +67,7 @@ tcT> using PR = pair<T,T>;
 #define trav(a,x) for (auto& a: x)
 
 const int MOD = 1e9+7;
-const int mxN = 2e5+5;
+const int mxN = 1e3+5;
 const ll INF = 1e18;
 const ld PI = acos((ld)-1);
 const int tSZ = (1 << 21);
@@ -188,8 +188,49 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, m, a[mxN][mxN];
+
+ll dfs(int i, int j) {
+  ll ans = a[i][j];
+  a[i][j] = 0;
+  for(int z = 0; z < 4; z++) {
+    int t_i = dx[z] + i;
+    int t_j = dy[z] + j;
+
+    if (t_i < 0 || t_j < 0 || t_i >= n || t_j >= m || a[t_i][t_j] == 0) continue;
+    ans += dfs(t_i, t_j);
+  }
+  return ans;
+}
+
+ll solve() {
+  ll ans = 0;
+
+  FOR(i, 0, n) {
+    FOR(j, 0, m) {
+      if (a[i][j] != 0) {
+        ans = max(ans, dfs(i, j));
+      }
+    }
+  }
+  return ans;
+}
+
 int main() {
 	setIO();
+
+  int t; re(t);
+
+  while (t--) {
+    re(n, m);
+
+    FOR(i, 0, n) {
+      FOR(j, 0, m) {
+        re(a[i][j]);
+      }
+    }
+    ps(solve());
+  }
 
 	return 0;
 	//read stuff at the bottom ffs

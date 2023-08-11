@@ -2,14 +2,7 @@
  * Fishing for salmon
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -188,8 +181,96 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n, q;
+str a;
+
+//                (+-+-+-)              ++  we dont care    --         (+-+-+-+-)
+//    if two minuses then its impossible
+//                                                                if two pluses then its impossible 
+//     keep count of +s and -s
+
+set <int> loc[2];
+int cnt[2];
+
+bool check() {
+  if(a[0] == ')' || a[n - 1] == '(' || (sz(loc[0]) == 0 && sz(loc[1]) != 0) || (sz(loc[0]) != 0 && sz(loc[1]) == 0)) {
+    return false;
+  }
+  if(sz(loc[0]) == 0 && sz(loc[1]) == 0) return cnt[0] == cnt[1];
+  // check for minuses before ++
+  int first_pos_plus = *loc[0].begin();
+  int first_pos_minus = *loc[1].begin();
+
+  if(first_pos_minus < first_pos_plus) return false;
+
+  int last_pos_plus = *loc[0].rbegin();
+  int last_pos_minus = *loc[1].rbegin();
+
+  if(last_pos_minus < last_pos_plus) return false;
+
+  //ps(cnt[0] - cnt[1]);
+  if (abs(cnt[0] - cnt[1]) % 2 == 0) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+void solve() {
+  int pos;
+
+  // + = 0    - = 1
+  FOR (i, 0, n - 1) {
+    //ps(a[i]);
+    if(a[i] == a[i + 1]) {
+      loc[a[i] == ')'].ins(i);
+    }
+    cnt[a[i] == '(']++;
+  }
+
+  cnt[a[n - 1] == '(']++;
+
+  //ps(cnt[0], cnt[1]);
+
+  FOR (i, 0, q) {
+    re(pos);
+    pos--;
+
+
+    if (pos > 0) {
+      if(loc[a[pos] == ')'].count(pos - 1)) {
+        loc[a[pos] == ')'].erase(pos - 1);
+      }
+      else {
+        loc[a[pos] == '('].ins(pos - 1);
+      }
+    }
+    if(pos < n - 1) {
+       if(loc[a[pos] == ')'].count(pos)) {
+        loc[a[pos] == ')'].erase(pos);
+      }
+      else {
+        loc[a[pos] == '('].ins(pos);
+      }
+    }
+    cnt[a[pos] == '(']--;
+    cnt[a[pos] == ')']++;
+  
+    a[pos] = a[pos] == '('? ')' : '(';
+
+    ps(check()?"YES":"NO");     
+  }
+}
+
 int main() {
 	setIO();
+
+  re(n, q);
+
+  re(a);
+
+  solve();
 
 	return 0;
 	//read stuff at the bottom ffs

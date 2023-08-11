@@ -1,15 +1,8 @@
 /*
- * Fishing for salmon
+ * Stay strong brother
 */
 
-#include <iostream>
-#include <math.h>
-#include <vector>
-#include <complex>
-#include <random>
-#include <array>
-#include <chrono>
-#include <bitset>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -188,18 +181,47 @@ tcTUU> void DBG(const T& t, const U&... u) {
 	#define chk(...) 0
 #endif
 
+int n;
+pair<string, int> pp[mxN];
+pair<int, int> tt[mxN];
+
+int solve() {
+	sort(pp, pp + n);
+	sort(tt, tt + n);
+
+	int ans = 0;
+	for(int i = 0; i < n; i++) {
+		if(tt[i].s == pp[i].s) {
+			ans++;
+		}
+	}
+	return ans;
+}
+
 int main() {
 	setIO();
+
+	int t; re(t);
+
+	for(int i = 1; i <= t; i++) {
+		re(n);
+		FOR(i, 0, n) {
+			re(pp[i].f, tt[i].f);
+			int c; re(c);
+			pp[i].s = tt[i].s = c;
+		}
+		printf("Case #%d: %d\n", i, solve());
+	}
 
 	return 0;
 	//read stuff at the bottom ffs
 }
-/* things to keep in mind
+/* things to keep in mind 
  * int overflow, array bounds
  * any special cases
  * always do something
  * WRITE STUFF DOWN
  * THINK ABOUT OTHER APPROACHES
  * DON'T NON STOP CHECK OTHERS
- * DON'T PANIC
+		* DON'T PANIC
 */
